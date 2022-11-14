@@ -21,7 +21,7 @@ void DispResult(int* answer) {
 
 	if (result % 2 == *answer)
 	{
-		printf("正解！！！\n");
+		printf("正解！！！\n"); 
 	}
 	else
 	{
