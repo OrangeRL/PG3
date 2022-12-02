@@ -1,59 +1,56 @@
-#include <stdio.h>
-#include <windows.h>
-#include <time.h>
+#include<list>
+#include <iostream>
 
-typedef void (*PFunc)(int*);
+using namespace std;
 
-void DispResult(int* answer) {
-	srand(time(NULL));
-	int result = rand() % 6 + 1;
+int main()
+{
+	list<const char*>stations = 
+	{ 
+		"Tokyo","Kanda","Akihabara","Okachimachi","Ueno",
+		"Uguisudani","Nippori","Tabata","Komagome","Sugamo","Otsuka","Ikebukuro",
+		"Mejiro","Takadanobaba","Shin-Okubo","Shinjuku","Yoyogi","Harajuku",
+		"Shibuya","Ebisu","Meguro","Gotanda","Osaki","Shinagawa","Tamachi",
+		"Hamamatsucho","Shimbashi","Yurakucho" 
+	};
+	//出力
+	cout << "---1970年の駅一覧---" << endl;
 
-	printf("\n出目 : %d\n", result);
-
-	if (result % 2 == 0)
+	for (const char* station : stations) 
 	{
-		printf("結果 : 偶数\n\n");
+		cout << station << endl;
 	}
-	else
+
+	//西日暮里(1971年開業)を挿入
+	for (list<const char*>::iterator itr = stations.begin(); itr != stations.end(); ++itr) 
 	{
-		printf("結果 : 奇数\n\n");
+		if (*itr == "Tabata") 
+		{
+			itr = stations.insert(itr, "Nishi - Nippori");
+			++itr;
+		}
 	}
-
-	if (result % 2 == *answer)
+	//出力
+	cout << "---2019年の駅一覧---" << endl;
+	for (const char* station : stations) 
 	{
-		printf("正解！！！\n"); 
+		cout << station << endl;
 	}
-	else
+	//高輪ゲートウェイ(2020年開業)を挿入
+	for (list<const char*>::iterator itr = stations.begin(); itr != stations.end(); ++itr) 
 	{
-		printf("不正解...\n");
+		if (*itr == "Tamachi") 
+		{
+			itr = stations.insert(itr, "Takanawa - Gateway");
+			++itr;
+		}
 	}
-}
-
-void SetTimeOut(PFunc p, int answer) {
-	// コールバック関数を呼び出す
-	Sleep(3000);
-	p(&answer);
-}
-
-int main(void) {
-
-	printf("\nサイコロの結果が:\n偶数だと思うなら:'0'\n奇数だと思うなら:'1'\n'0'か'1'を入力をしてください\n");
-	printf("入力:");
-
-	int answer;
-	scanf_s("%d", &answer);
-
-	if (answer != 0 && answer != 1)
+	//出力
+	cout << "---2022年の駅一覧---" << endl;
+	for (const char* station : stations) 
 	{
-		printf("\nError!\n");
-		return 0;
+		cout << station << endl;
 	}
-	
-	printf("\nローディング。。。\n");
-
-	PFunc p;
-	p = DispResult;
-	SetTimeOut(p, answer);
 
 	return 0;
 }
