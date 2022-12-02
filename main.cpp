@@ -1,56 +1,279 @@
-#include<list>
-#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "List.h"
 
 using namespace std;
 
+template <typename Type>
+void Display(List<Type>& list, int& select, int& menu);
+template <typename Type>
+void Insert(List<Type>& list, int& select);
+template <typename Type>
+void Edit(List<Type>& list, int& select);
+template <typename Type>
+void Delete(List<Type>& list, int& select);
+
 int main()
 {
-	list<const char*>stations = 
-	{ 
-		"Tokyo","Kanda","Akihabara","Okachimachi","Ueno",
-		"Uguisudani","Nippori","Tabata","Komagome","Sugamo","Otsuka","Ikebukuro",
-		"Mejiro","Takadanobaba","Shin-Okubo","Shinjuku","Yoyogi","Harajuku",
-		"Shibuya","Ebisu","Meguro","Gotanda","Osaki","Shinagawa","Tamachi",
-		"Hamamatsucho","Shimbashi","Yurakucho" 
-	};
-	//èoóÕ
-	cout << "---1970îNÇÃâwàÍóó---" << endl;
+	List<string> list;
+	list.PushBack("banana");
+	list.PushBack("apple");
+	list.PushBack("orange");
+	//óvëfÇÃëÄçÏÇÃëÄçÏî‘çÜ
+	int menuNumber = 0;
 
-	for (const char* station : stations) 
-	{
-		cout << station << endl;
-	}
+	//óvëfÇÃï\é¶ÇÃëÄçÏî‘çÜ
+	int selectNumber = 0;
 
-	//êºì˙ïÈó¢(1971îNäJã∆)Çë}ì¸
-	for (list<const char*>::iterator itr = stations.begin(); itr != stations.end(); ++itr) 
+	while (true)
 	{
-		if (*itr == "Tabata") 
+		cout << "[óvëfÇÃëÄçÏ]\n";
+		cout << "1.óvëfÇÃï\é¶\n";
+		cout << "2.óvëfÇÃë}ì¸\n";
+
+		if (list.Size() > 0)
 		{
-			itr = stations.insert(itr, "Nishi - Nippori");
-			++itr;
+			cout << "3.óvëfÇÃï“èW\n";
+			cout << "4.óvëfÇÃçÌèú\n";
 		}
-	}
-	//èoóÕ
-	cout << "---2019îNÇÃâwàÍóó---" << endl;
-	for (const char* station : stations) 
-	{
-		cout << station << endl;
-	}
-	//çÇó÷ÉQÅ[ÉgÉEÉFÉC(2020îNäJã∆)Çë}ì¸
-	for (list<const char*>::iterator itr = stations.begin(); itr != stations.end(); ++itr) 
-	{
-		if (*itr == "Tamachi") 
+		cout << "----------------------------------\n";
+		cout << "ëÄçÏÇëIëÇµÇƒÇ≠ÇæÇ≥Ç¢\n";
+
+		if (menuNumber == 0)
 		{
-			itr = stations.insert(itr, "Takanawa - Gateway");
-			++itr;
+			//ëÄçÏî‘çÜÇéÊìæ
+			scanf_s("%d", &menuNumber);
 		}
-	}
-	//èoóÕ
-	cout << "---2022îNÇÃâwàÍóó---" << endl;
-	for (const char* station : stations) 
-	{
-		cout << station << endl;
+		system("cls");
+
+		switch (menuNumber)
+		{
+		case 1://óvëfÇÃï\é¶
+			Display(list, menuNumber, selectNumber);
+			break;
+
+		case 2://ç≈å„îˆÇ…óvëfÇí«â¡
+			Insert(list, menuNumber);
+			break;
+
+		case 3://îCà”ÇÃèÍèäÇÃílÇïœçX
+			Edit(list, menuNumber);
+			break;
+		case 4://îCà”ÇÃèÍèäÇÃçÌèú
+			Delete(list, menuNumber);
+			break;
+		}
 	}
 
 	return 0;
+}
+
+template <typename Type>
+void Display(List<Type>& list, int& operationNumber, int& displayOperationNumber) {
+	cout << "[óvëfÇÃï\é¶]\n";
+	cout << "1.óvëfÇÃàÍóóï\é¶\n";
+	cout << "2.èáî‘ÇéwíËÇµÇƒóvëfÇï\é¶\n";
+	cout << "9.óvëfëÄçÏÇ…ñﬂÇÈ\n";
+	cout << endl;
+	cout << "ëÄçÏÇëIëÇµÇƒÇ≠ÇæÇ≥Ç¢" << endl;
+
+	//ëÄçÏî‘çÜÇéÊìæ
+	cin >> displayOperationNumber;
+	system("cls");
+
+	switch (displayOperationNumber) {
+	case 1:
+		cout << "[óvëfÇÃàÍóóï\é¶]" << endl;
+
+		//àÍóóï\é¶
+		list.Dump();
+
+		cout << "óvëfêî:" << list.Size() << endl;
+
+		break;
+	case 2:
+		cout << "[èáî‘ÇéwíËÇµÇƒóvëfÇï\é¶]" << endl;
+		cout << "ï\é¶ÇµÇΩÇ¢óvëfÇÃèáî‘ÇéwíËÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB" << endl;
+
+		//éwíËÇ∑ÇÈî‘çÜÇéÊìæ
+		int specifyNumber;
+		cin >> specifyNumber;
+		cout << endl;
+
+
+		//éwíËÇµÇƒï\é¶
+		list.ElementSpecification(specifyNumber);
+
+		break;
+
+	case 9:
+		operationNumber = 0;
+		break;
+	}
+
+	//óvëfëÄçÏÇ…ñﬂÇÁÇ»Ç©Ç¡ÇΩÇÁ
+	if (displayOperationNumber == 1 || displayOperationNumber == 2)
+	{
+		cout << endl;
+		cout << "----------------------------------" << endl;
+		cout << "1.óvëfÇÃï\é¶Ç…ñﬂÇÈ" << endl;
+		cout << "2.óvëfÇÃëÄçÏÇ…ñﬂÇÈ" << endl;
+
+		//ëÄçÏî‘çÜÇéÊìæ
+		cin >> displayOperationNumber;
+
+		system("cls");
+		switch (displayOperationNumber)
+		{
+		case 1:
+			operationNumber = 1;
+			break;
+		case 2:
+			operationNumber = 0;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+template <typename Type>
+void Insert(List<Type>& list, int& operationNum)
+{
+	cout << "[ÉäÉXÉgóvëfÇÃë}ì¸]" << endl;
+	cout << endl;
+	cout << "óvëfÇí«â¡èÍèäÇéwíËÇµÇƒÇ≠ÇæÇ≥Ç¢ÅBç≈å„îˆÇ…í«â¡Ç∑ÇÈèÍçáÇÕâΩÇ‡ì¸óÕÇµÇ»Ç¢Ç≈Ç≠ÇæÇ≥Ç¢ÅB" << endl;
+
+	string insertNumber;
+	while (getchar() != '\n');
+
+	getline(cin, insertNumber);
+
+	if (insertNumber == "")
+	{
+		cout << "í«â¡Ç∑ÇÈóvëfÇÃílÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢" << endl;
+		Type element{};
+
+		cin >> element;
+
+		list.PushBack(element);
+
+		cout << "óvëf" << element << "Ç™" << "ç≈å„îˆÇ…ë}ì¸Ç≥ÇÍÇ‹ÇµÇΩ" << endl;
+	}
+	else
+	{
+		int index = atoi(insertNumber.c_str());
+
+		cout << "í«â¡Ç∑ÇÈóvëfÇÃílÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢" << endl;
+		Type element{};
+
+		cin >> element;
+
+		list.Insert(element, index);
+
+		cout << "óvëf" << element << "Ç™" << index << "î‘ñ⁄Ç…ë}ì¸Ç≥ÇÍÇ‹ÇµÇΩ" << endl;
+	}
+
+	cout << endl;
+	cout << "----------------------------------" << endl;
+	cout << "9.óvëfëÄçÏÇ…ñﬂÇÈ" << endl;
+
+	cin >> operationNum;
+	system("cls");
+
+	if (operationNum == 9)
+	{
+		operationNum = 0;
+	}
+	else
+	{
+		operationNum = 2;
+	}
+}
+
+template <typename Type>
+void Edit(List<Type>& list, int& operationNumber)
+{
+	cout << "[óvëfÇÃï“èW]" << endl;
+	cout << endl;
+	cout << "ï“èWÇµÇΩÇ¢óvëfÇÃî‘çÜÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢" << endl;
+
+	int elementNumber;
+	cin >> elementNumber;
+	cout << endl;
+
+	if (list.Search(elementNumber))
+	{
+		cout << elementNumber << "î‘ñ⁄ÇÃóvëfÇÃïœçXÇ∑ÇÈílÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB" << endl;
+
+		Type changeElement{};
+		cin >> changeElement;
+
+		list.ChangeValue(changeElement, elementNumber);
+		cout << endl;
+		cout << elementNumber << "î‘ñ⁄ÇÃóvëfÇÃílÇ™" << '"' << changeElement << '"' << "Ç…ïœçXÇ≥ÇÍÇ‹ÇµÇΩ" << endl;
+	}
+	else
+	{
+		cout << elementNumber << "î‘ñ⁄ÇÃóvëfÇÃÇ™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩÅB" << endl;
+	}
+
+
+	cout << endl;
+	cout << "----------------------------------" << endl;
+	cout << "9.óvëfëÄçÏÇ…ñﬂÇÈ" << endl;
+	cin >> operationNumber;
+	system("cls");
+
+	if (operationNumber == 9)
+	{
+		operationNumber = 0;
+	}
+	else
+	{
+		operationNumber = 3;
+	}
+
+}
+
+template <typename Type>
+void Delete(List<Type>& list, int& operationNumber)
+{
+	cout << "[óvëfÇÃçÌèú]" << endl;
+	cout << endl;
+	cout << "çÌèúÇµÇΩÇ¢óvëfÇÃî‘çÜÇéwíËÇµÇƒÇ≠ÇæÇ≥Ç¢" << endl;
+
+	int elementNumber;
+	cin >> elementNumber;
+	cout << endl;
+
+	if (list.Search(elementNumber))
+	{
+		cout << elementNumber << "î‘ñ⁄ÇÃóvëf" << '"' << list.GetCell(elementNumber) << '"' << "çÌèúÇµÇ‹ÇµÇΩ" << endl;
+
+		list.Delete(elementNumber);
+
+		cout << endl;
+	}
+	else
+	{
+		cout << elementNumber << "î‘ñ⁄ÇÃóvëfÇÃÇ™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩÅB" << endl;
+	}
+
+	cout << endl;
+	cout << "----------------------------------" << endl;
+	cout << "9.óvëfëÄçÏÇ…ñﬂÇÈ" << endl;
+
+	cin >> operationNumber;
+	system("cls");
+
+	if (operationNumber == 9)
+	{
+		operationNumber = 0;
+	}
+	else
+	{
+		operationNumber = 4;
+	}
 }
