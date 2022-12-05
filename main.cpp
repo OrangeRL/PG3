@@ -1,59 +1,52 @@
 #include <stdio.h>
-#include <windows.h>
+#include <stdlib.h>
 #include <time.h>
+#include <Windows.h>
+#include <functional>
 
-typedef void (*PFunc)(int*);
-
-void DispResult(int* answer) {
-	srand(time(NULL));
-	int result = rand() % 6 + 1;
-
-	printf("\n出目 : %d\n", result);
-
-	if (result % 2 == 0)
-	{
-		printf("結果 : 偶数\n\n");
-	}
-	else
-	{
-		printf("結果 : 奇数\n\n");
-	}
-
-	if (result % 2 == *answer)
-	{
-		printf("正解！！！\n"); 
-	}
-	else
-	{
-		printf("不正解...\n");
-	}
+void SetTimeout(std::function<void()> func, int second)
+{
+	Sleep(second);
+	func();
 }
 
-void SetTimeOut(PFunc p, int answer) {
-	// コールバック関数を呼び出す
-	Sleep(3000);
-	p(&answer);
-}
+int main(int argc, const char* argv[])
+{
+	//入力
+	int input;
+	printf("サイコロの結果が:\n偶数だと思うなら : '0'\n奇数だと思うなら : '1'\n'0'か'1'を入力をしてください\n");
+	scanf_s("%d", &input);
 
-int main(void) {
+	//答えの決定
+	int answer = 0;
+	srand(time(nullptr));
 
-	printf("\nサイコロの結果が:\n偶数だと思うなら:'0'\n奇数だと思うなら:'1'\n'0'か'1'を入力をしてください\n");
-	printf("入力:");
+	answer = rand() % 100;
 
-	int answer;
-	scanf_s("%d", &answer);
-
-	if (answer != 0 && answer != 1)
+	//関数の作成
+	std::function<void()> judgeFunc = [&]()
 	{
-		printf("\nError!\n");
-		return 0;
-	}
-	
+
+		printf("%d\n", answer);
+		if (answer % 2 == 0 and input == 0)
+		{
+			printf("正解\n");
+		}
+		else if (answer % 2 == 1 and input == 1)
+		{
+			printf("正解\n");
+		}
+		else
+		{
+			printf("不正解\n");
+		}
+
+	};
+
 	printf("\nローディング。。。\n");
 
-	PFunc p;
-	p = DispResult;
-	SetTimeOut(p, answer);
+	//実行
+	SetTimeout(judgeFunc, 2700);
 
 	return 0;
 }
