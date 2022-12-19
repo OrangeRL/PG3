@@ -1,59 +1,59 @@
 #include <stdio.h>
-#include <windows.h>
-#include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef void (*PFunc)(int*);
+typedef struct cell
+{
+	char str[16];
+	struct cell* next;
+}CELL;
 
-void DispResult(int* answer) {
-	srand(time(NULL));
-	int result = rand() % 6 + 1;
+void Create(CELL* headCell, const char* buf);
+void Index(CELL* headCell);
 
-	printf("\n出目 : %d\n", result);
+int main()
+{
+	char str[16];
 
-	if (result % 2 == 0)
+	CELL head;
+	head.next = nullptr;
+
+	while (true)
 	{
-		printf("結果 : 偶数\n\n");
+		printf("Input Item:");
+		scanf_s("%s", str, 16);
+		Create(&head, str);
+		Index(&head);
+		printf("\n");
 	}
-	else
-	{
-		printf("結果 : 奇数\n\n");
-	}
-
-	if (result % 2 == *answer)
-	{
-		printf("正解！！！\n");
-	}
-	else
-	{
-		printf("不正解...\n");
-	}
-}
-
-void SetTimeOut(PFunc p, int answer) {
-	// コールバック関数を呼び出す
-	Sleep(3000);
-	p(&answer);
-}
-
-int main(void) {
-
-	printf("\nサイコロの結果が:\n偶数だと思うなら:'0'\n奇数だと思うなら:'1'\n'0'か'1'を入力をしてください\n");
-	printf("入力:");
-
-	int answer;
-	scanf_s("%d", &answer);
-
-	if (answer != 0 && answer != 1)
-	{
-		printf("\nError!\n");
-		return 0;
-	}
-	
-	printf("\nローディング。。。\n");
-
-	PFunc p;
-	p = DispResult;
-	SetTimeOut(p, answer);
-
 	return 0;
+}
+
+void Create(CELL* headCell, const char* buf)
+{
+	CELL* newCell;
+	newCell = (CELL*)malloc(sizeof(CELL));
+
+	if (newCell != nullptr)
+	{
+		strcpy_s(newCell->str, 16, buf);
+		// 新規作成するセルのポインタ->値 = 値;
+		newCell->next = nullptr;
+	}
+	while (headCell->next != nullptr)
+	{
+		headCell = headCell->next;
+	}
+	headCell->next = newCell;
+}
+
+void Index(CELL* headCell)
+{
+	printf("-------------------LIST--------------------");
+	while (headCell->next != nullptr)
+	{
+		headCell = headCell->next;
+		printf("\nInserted Item: %s\n", headCell->str);
+	}
+	printf("-------------------END---------------------");
 }
