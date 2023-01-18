@@ -18,6 +18,24 @@ int DrawCone3D(const Vector3& TopPos, const Vector3& BottomPos, const float r, c
 //DxLib=>intDrawLine3D(VECTORPos1,VECTORPos2,unsignedintColor);
 int DrawLine3D(const Vector3& Pos1, const Vector3& Pos2, const unsigned int Color);
 
+void DrawString(float x, float y, int color, Quaternion q);
+
+Quaternion q1(2.0f, 3.0f, 4.0f, 1.0f);
+Quaternion q2(1.0f, 3.0f, 5.0f, 2.0f);
+//’PˆÊQuaternion
+Quaternion qIdentity = IdentityQuaternion();
+//‹¤–ð
+Quaternion conj = Conjugate(q1);
+//‹t
+Quaternion inv = Inverse(q1);
+//³‹K‰»
+Quaternion normal = Normalize(q1);
+//Ï
+Quaternion mul1 = Multiply(q1, q2);
+Quaternion mul2 = Multiply(q2, q1);
+//norm 
+float norm = Norm(q1);
+
 //ƒJƒƒ‰‚ÌˆÊ’u‚ÆŽp¨‚ÌÝ’è
 //DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
 int SetCameraPositionAndTargetAndUpVec(
@@ -72,12 +90,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	float lineY1 = 300;
 	float lineX2 = 500;
 	float lineY2 = 100;
-	
+
 	//Line length
 	float distX = lineX1 - lineX2;
 	float distY = lineY1 - lineY2;
 	float len = sqrt((distX * distX) + (distY * distY));
-	
+
 	//Dot product of the line and circle
 	float dot = (((circleX - lineX1) * (lineX2 - lineX1)) + ((circleY - lineY1) * (lineY2 - lineY1))) / pow(len, 2);
 
@@ -95,7 +113,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		distX = closestX - circleX;
 		distY = closestY - circleY;
 		float distance = sqrt((distX * distX) + (distY * distY));
-		
+
 		//•`‰æ---------------------------
 		ClearDrawScreen();
 		//‰æ–Ê‚ðÁ‹Ž
@@ -103,16 +121,23 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		DrawAxis3D(500.0f);
 
 		//ƒ‚ƒfƒ‹‚Ì•`‰æ
-		if (distance >= circleR) {
+	/*	if (distance >= circleR) {
 		DrawCircle(circleX, circleY, circleR , GetColor(255, 255, 0), true);
 		DrawLine(lineX1, lineY1 - 200, lineX2, lineY2 - 200, GetColor(255, 255, 0), true);
 		}
 		else if (distance <= circleR) {
 		DrawCircle(circleX, circleY, circleR, GetColor(255, 0, 0), true);
 		DrawLine(lineX1, lineY1-200, lineX2, lineY2-200, GetColor(255, 0, 0), true);
-		}
-		
-		//DrawKeyOperation();	//ƒL[‘€ì‚Ì•`‰æ
+		}*/
+
+		/*if((10 + circleR) * (10 + circleR) <= (lineX1 - circleX) * (lineX1 - circleX) + (lineY1 - circleY) * (lineY1 - circleY) && (10 + circleR) * (10 + circleR) <= (lineX2 - circleX) * (lineX2 - circleX) + (lineY2 - circleY) * (lineY2 - circleY)) {
+			DrawCircle(circleX, circleY, circleR, GetColor(255, 255, 0), true);
+			DrawLine(lineX1, lineY1, lineX2, lineY2, GetColor(255, 255, 0), true);
+		}*/
+
+
+
+		DrawKeyOperation();	//ƒL[‘€ì‚Ì•`‰æ
 		//ƒtƒŠƒbƒv‚·‚é
 		ScreenFlip();
 	}
@@ -127,9 +152,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 void DrawAxis3D(const float length)
 {
 	//Ž²‚Ìü‚Ì•`‰æ
-	DrawLine3D(Vector3(-length, 0, 0), Vector3(+length, 0, 0), GetColor(255, 0, 0));	//xŽ²
-	DrawLine3D(Vector3(0, -length, 0), Vector3(0, +length, 0), GetColor(0, 255, 0));	//yŽ²
-	DrawLine3D(Vector3(0, 0, -length), Vector3(0, 0, +length), GetColor(0, 0, 255));	//zŽ²
+	//DrawLine3D(Vector3(-length, 0, 0), Vector3(+length, 0, 0), GetColor(255, 0, 0));	//xŽ²
+	//DrawLine3D(Vector3(0, -length, 0), Vector3(0, +length, 0), GetColor(0, 255, 0));	//yŽ²
+	//DrawLine3D(Vector3(0, 0, -length), Vector3(0, 0, +length), GetColor(0, 0, 255));	//zŽ²
 
 	////Ž²‚Ìæ‚Ì•`‰æ xyzŽ²‚Ìæ‚Á‚Û‚ÉA‰~‚ð‚Â‚¯‚é
 	//const float coneSize = 10.0f;
@@ -144,11 +169,26 @@ void DrawAxis3D(const float length)
 void DrawKeyOperation()
 {
 	const unsigned white = GetColor(255, 255, 255);
-	DrawFormatString(10, 20 * 1, white, "[W][E][R]R:ƒŠƒZƒbƒg");
-	DrawFormatString(10, 20 * 2, white, "[A][S][D]AD:yŽ²‚Ü‚í‚è‚Ì‰ñ“]");
-	DrawFormatString(10, 20 * 3, white, "[Z]WS:xŽ²‚Ü‚í‚è‚Ì‰ñ“]");
-	DrawFormatString(10, 20 * 4, white, "EZ:zŽ²‚Ü‚í‚è‚Ì‰ñ“]");
 
+	DrawString(0, 0, white, qIdentity);
+	DrawString(0, 20, white, conj);
+	DrawString(0, 40, white, inv);
+	DrawString(0, 60, white, normal);
+	DrawString(0, 80, white, mul1);
+	DrawString(0, 100, white, mul2);
+	DrawFormatString(0, 120, white, "%f", norm);
+
+	DrawFormatString(380, 0, white, "Identity");
+	DrawFormatString(380, 20, white, "Conjugate");
+	DrawFormatString(380, 40, white, "Inverse");
+	DrawFormatString(380, 60, white, "Normalize");
+	DrawFormatString(380, 80, white, "Multiply(q1,q2)");
+	DrawFormatString(380, 100, white, "Multiply(q2,q1)");
+	DrawFormatString(380, 120, white, "Normalize");
+
+}
+void DrawString(float x, float y, int color, Quaternion quaternion) {
+	DrawFormatString(x, y, color, "%f %f %f %f", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 }
 
 //ˆÈ~ADxLib‚ÌŠeŠÖ”‚ÅVector3Œ^Matrix4Œ^‚ð—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚éŠÖ”ŒQ//‹…‚Ì•`‰æ//DxLib=>intDrawSphere3D(VECTORCenterPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);
