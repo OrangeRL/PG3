@@ -2,6 +2,7 @@
 //Matrix4Œ^‚ÌƒeƒXƒg
 //==========================================
 #include"Vector3.h"
+#include"Quaternion.h"
 #include"Matrix4.h"
 #include<DxLib.h>
 #include<cstring>
@@ -35,6 +36,12 @@ Quaternion mul1 = Multiply(q1, q2);
 Quaternion mul2 = Multiply(q2, q1);
 //norm 
 float norm = Norm(q1);
+
+Quaternion rotation = MakeAxisAngle({ 0.0f, 0.0f, 1.0f }, 3.141592f / 2.0f);
+Vector3 pointY = { 0.0f,1.0f,0.0f };
+Matrix4 rotateMatrix = MakeRotateMatrix(rotation);
+Vector3 rotateByQuaternion = RotateVector(pointY, rotation);
+Vector3 rotateByMatrix = transform(pointY, rotateMatrix);
 
 //ƒJƒƒ‰‚ÌˆÊ’u‚ÆŽp¨‚ÌÝ’è
 //DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
@@ -169,26 +176,14 @@ void DrawAxis3D(const float length)
 void DrawKeyOperation()
 {
 	const unsigned white = GetColor(255, 255, 255);
+	DrawFormatString(0, 0, white, "%f %f %f", rotateByQuaternion.x, rotateByQuaternion.y, rotateByQuaternion.z);
+	DrawFormatString(0, 20, white, "%f %f %f", rotateByMatrix.x, rotateByMatrix.y, rotateByMatrix.z);
 
-	DrawString(0, 0, white, qIdentity);
-	DrawString(0, 20, white, conj);
-	DrawString(0, 40, white, inv);
-	DrawString(0, 60, white, normal);
-	DrawString(0, 80, white, mul1);
-	DrawString(0, 100, white, mul2);
-	DrawFormatString(0, 120, white, "%f", norm);
-
-	DrawFormatString(380, 0, white, "Identity");
-	DrawFormatString(380, 20, white, "Conjugate");
-	DrawFormatString(380, 40, white, "Inverse");
-	DrawFormatString(380, 60, white, "Normalize");
-	DrawFormatString(380, 80, white, "Multiply(q1,q2)");
-	DrawFormatString(380, 100, white, "Multiply(q2,q1)");
-	DrawFormatString(380, 120, white, "Normalize");
-
+	DrawFormatString(300, 0, white, "rotateByQuaternion");
+	DrawFormatString(300, 20, white, "rotateByMatrix");
 }
 void DrawString(float x, float y, int color, Quaternion quaternion) {
-	DrawFormatString(x, y, color, "%f %f %f %f", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+	DrawFormatString(x, y, color, "%f %f %f %f", quaternion.v.x, quaternion.v.y, quaternion.v.z, quaternion.w);
 }
 
 //ˆÈ~ADxLib‚ÌŠeŠÖ”‚ÅVector3Œ^Matrix4Œ^‚ð—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚éŠÖ”ŒQ//‹…‚Ì•`‰æ//DxLib=>intDrawSphere3D(VECTORCenterPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);

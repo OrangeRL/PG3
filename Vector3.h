@@ -1,24 +1,8 @@
 #pragma once 
-struct Quaternion
-{
-	float x; 
-	float y; 
-	float z; 
-	float w; 
-	Quaternion(float x, float y, float z, float w)
-	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-		this->w = w;
-	}
-};
-
-
 
 
 class Vector3
-{ 
+{
 public:
 	float x;//x¬•ª
 	float y;//y¬•ª
@@ -54,17 +38,4 @@ const Vector3 operator/(const Vector3& v,float s);
 const Vector3 lerp(const Vector3& start, const Vector3& end, const float t);
 const Vector3 easeIn(const Vector3& start, const Vector3& end, const float t);
 const Vector3 easeOut(const Vector3& start, const Vector3& end, const float t);
-
-//Quaternion‚ÌÏ
-Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
-//’PˆÊQuaternion‚ğ•Ô‚·
-Quaternion IdentityQuaternion();
-//‹¤–ğQuaternion‚ğ•Ô‚·
-Quaternion Conjugate(const Quaternion& quaternion);
-//Quaternion‚Ìnorm‚ğ•Ô‚·
-float Norm(const Quaternion& quaternion);
-//³‹K‰»‚µ‚½Quaternion‚ğ•Ô‚·
-Quaternion Normalize(const Quaternion& quaternion);
-//‹tQuaternion‚ğ•Ô‚·
-Quaternion Inverse(const Quaternion& quaternion);
 

@@ -126,38 +126,4 @@ const Vector3 easeOut(const Vector3& start, const Vector3& end, float t)
 	return start * (1.0f - y) + end * y;
 }
 
-Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs) {
-	return 
-	{
-	   lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z,  // 1
-	   lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,  // i
-	   lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x,  // j
-	   lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w   // k
-	};
-}
-Quaternion IdentityQuaternion()
-{
-	return {0,0,0,0};
-}
 
-Quaternion Conjugate(const Quaternion& quaternion)
-{
-	return Quaternion(-quaternion.x, -quaternion.y, -quaternion.z, quaternion.w);
-}
-
-float Norm(const Quaternion& quaternion)
-{
-	return sqrt(pow(quaternion.x, 2.0f) + pow(quaternion.y, 2.0f) + pow(quaternion.z, 2.0f) + pow(quaternion.w, 2.0f));
-}
-
-Quaternion Normalize(const Quaternion& quaternion)
-{
-	return Quaternion(quaternion.x / Norm(quaternion), quaternion.y / Norm(quaternion), quaternion.z / Norm(quaternion), quaternion.w / Norm(quaternion));
-}
-
-Quaternion Inverse(const Quaternion& quaternion)
-{
-	float n = pow(Norm(quaternion), 2.0f);
-	return Quaternion(Conjugate(quaternion).x / n, Conjugate(quaternion).y / n, Conjugate(quaternion).z / n, Conjugate(quaternion).w / n);
-	
-}
