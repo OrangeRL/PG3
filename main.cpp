@@ -1,12 +1,25 @@
 #include<stdio.h>
-#include"SceneManager.h"
+#include"Enemy.h"
+
 int main()
 {
+	Enemy enemy;
+	int input;
 
-	SceneManager* sceneManager_ = SceneManager::GetInstance();
 
-	sceneManager_->GetInstance()->SceneDisplay();
-	sceneManager_->GetInstance()->SceneChange();
+	while (true)
+	{
+		//‘±‚¯‚é‚©‚Ç‚¤‚©“ü—Í‚³‚¹‚é
+		printf("0:exit \n1:continue==> ");
+		scanf_s("%d", &input);
+		if (input == 0)
+
+			break;
+
+		enemy.Update();
+
+		enemy.Draw();
+	}
 
 
 	return 0;
