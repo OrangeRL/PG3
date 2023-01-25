@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Matrix4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
