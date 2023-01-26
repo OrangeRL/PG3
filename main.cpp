@@ -20,7 +20,7 @@ int DrawCone3D(const Vector3& TopPos, const Vector3& BottomPos, const float r, c
 int DrawLine3D(const Vector3& Pos1, const Vector3& Pos2, const unsigned int Color);
 
 void DrawString(float x, float y, int color, Quaternion q);
-
+void Draw(int x, int y, Quaternion q);
 Quaternion q1(2.0f, 3.0f, 4.0f, 1.0f);
 Quaternion q2(1.0f, 3.0f, 5.0f, 2.0f);
 //単位Quaternion
@@ -37,11 +37,14 @@ Quaternion mul2 = Multiply(q2, q1);
 //norm 
 float norm = Norm(q1);
 
-Quaternion rotation = MakeAxisAngle({ 0.0f, 0.0f, 1.0f }, 3.141592f / 2.0f);
-Vector3 pointY = { 0.0f,1.0f,0.0f };
-Matrix4 rotateMatrix = MakeRotateMatrix(rotation);
-Vector3 rotateByQuaternion = RotateVector(pointY, rotation);
-Vector3 rotateByMatrix = transform(pointY, rotateMatrix);
+Quaternion rotation0 = MakeAxisAngle({ 0.71f, 0.71f, 0.0f }, 0.3f);
+Quaternion rotation1 = MakeAxisAngle({ 0.71f, 0.0f, 0.71f }, 3.141592f);
+
+Quaternion interpolate0 = Slerp(rotation0, rotation1, 0.0f);
+Quaternion interpolate1 = Slerp(rotation0, rotation1, 0.3f);
+Quaternion interpolate2 = Slerp(rotation0, rotation1, 0.5f);
+Quaternion interpolate3 = Slerp(rotation0, rotation1, 0.7f);
+Quaternion interpolate4 = Slerp(rotation0, rotation1, 1.0f);
 
 //カメラの位置と姿勢の設定
 //DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
@@ -176,55 +179,62 @@ void DrawAxis3D(const float length)
 void DrawKeyOperation()
 {
 	const unsigned white = GetColor(255, 255, 255);
-	DrawFormatString(0, 0, white, "%f %f %f", rotateByQuaternion.x, rotateByQuaternion.y, rotateByQuaternion.z);
-	DrawFormatString(0, 20, white, "%f %f %f", rotateByMatrix.x, rotateByMatrix.y, rotateByMatrix.z);
+	Draw(0, 0, interpolate0);
+	Draw(0, 30, interpolate1);
+	Draw(0, 60, interpolate2);
+	Draw(0, 90, interpolate3);
+	Draw(0, 120, interpolate4);
 
-	DrawFormatString(300, 0, white, "rotateByQuaternion");
-	DrawFormatString(300, 20, white, "rotateByMatrix");
-}
-void DrawString(float x, float y, int color, Quaternion quaternion) {
-	DrawFormatString(x, y, color, "%f %f %f %f", quaternion.v.x, quaternion.v.y, quaternion.v.z, quaternion.w);
-}
+	DrawFormatString(350, 0, white, "interpolate0:Slerp(q0,q1,0.0f)");
+	DrawFormatString(350, 30, white, "interpolate1:Slerp(q0,q1,0.3f)");
+	DrawFormatString(350, 60, white, "interpolate2:Slerp(q0,q1,0.5f)");
+	DrawFormatString(350, 90, white, "interpolate3:Slerp(q0,q1,0.7f)");
+	DrawFormatString(350, 120, white, "interpolate4:Slerp(q0,q1,1.0f)");
 
-//以降、DxLibの各関数でVector3型Matrix4型を利用できるようにする関数群//球の描画//DxLib=>intDrawSphere3D(VECTORCenterPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);
-int DrawSphere3D(const Vector3& CenterPos, const float r, const int DivNum, const unsigned int DifColor, const unsigned int SpcColor, const int FillFlag)
-{
-	VECTOR centerPos = { CenterPos.x,CenterPos.y,CenterPos.z };	//構造体初期化子リスト
+}
+	//以降、DxLibの各関数でVector3型Matrix4型を利用できるようにする関数群//球の描画//DxLib=>intDrawSphere3D(VECTORCenterPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);
+	int DrawSphere3D(const Vector3 & CenterPos, const float r, const int DivNum, const unsigned int DifColor, const unsigned int SpcColor, const int FillFlag)
+	{
+		VECTOR centerPos = { CenterPos.x,CenterPos.y,CenterPos.z };	//構造体初期化子リスト
 
-	return DrawSphere3D(centerPos, r, DivNum, DifColor, SpcColor, FillFlag);
-}
+		return DrawSphere3D(centerPos, r, DivNum, DifColor, SpcColor, FillFlag);
+	}
 
-//DxLib=>intDrawCone3D(VECTORTopPos,VECTORBottomPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);
-int DrawCone3D(const Vector3& TopPos, const Vector3& BottomPos, const float r, const int DivNum, const unsigned int DifColor, const unsigned int SpcColor, const int FillFlag)
-{
-	VECTOR topPos = { TopPos.x,TopPos.y,TopPos.z };
-	VECTOR bottomPos = { BottomPos.x,BottomPos.y,BottomPos.z };
-	return DrawCone3D(topPos, bottomPos, r, DivNum, DifColor, SpcColor, FillFlag);
-}
-//線分の描画//DxLib=>intDrawLine3D(VECTORPos1,VECTORPos2,unsignedintColor);
-int DrawLine3D(const Vector3& Pos1, const Vector3& Pos2, const unsigned int Color)
-{
-	VECTOR p1 = { Pos1.x,Pos1.y,Pos1.z };//構造体初期化子リスト
-	VECTOR p2 = { Pos2.x,Pos2.y,Pos2.z };//構造体初期化子リスト
-	return DrawLine3D(p1, p2, Color);
-}
-//カメラの位置と姿勢の設定//DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
-int SetCameraPositionAndTargetAndUpVec(
-	const Vector3& cameraPosition,//カメラの位置
-	const Vector3& cameraTarget,//カメラの注視点
-	const Vector3& cameraUp//カメラの上の向き
-)
-{
-	VECTOR position = { cameraPosition.x,cameraPosition.y,cameraPosition.z };
-	VECTOR target = { cameraTarget.x,cameraTarget.y,cameraTarget.z };
-	VECTOR up = { cameraUp.x,cameraUp.y,cameraUp.z };
-	return SetCameraPositionAndTargetAndUpVec(position, target, up);
-}
-//モデルの座標変換用行列をセットする
-//DxLib=>intMV1SetMatrix(intMHandle,MATRIXMatrix);
-int MV1SetMatrix(const int MHandle, const Matrix4 Matrix)
-{
-	MATRIX matrix; std::memcpy(&matrix, &Matrix, sizeof MATRIX);	//メモリ間コピー
-	return MV1SetMatrix(MHandle, matrix);
-}
+	//DxLib=>intDrawCone3D(VECTORTopPos,VECTORBottomPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);
+	int DrawCone3D(const Vector3 & TopPos, const Vector3 & BottomPos, const float r, const int DivNum, const unsigned int DifColor, const unsigned int SpcColor, const int FillFlag)
+	{
+		VECTOR topPos = { TopPos.x,TopPos.y,TopPos.z };
+		VECTOR bottomPos = { BottomPos.x,BottomPos.y,BottomPos.z };
+		return DrawCone3D(topPos, bottomPos, r, DivNum, DifColor, SpcColor, FillFlag);
+	}
+	//線分の描画//DxLib=>intDrawLine3D(VECTORPos1,VECTORPos2,unsignedintColor);
+	int DrawLine3D(const Vector3 & Pos1, const Vector3 & Pos2, const unsigned int Color)
+	{
+		VECTOR p1 = { Pos1.x,Pos1.y,Pos1.z };//構造体初期化子リスト
+		VECTOR p2 = { Pos2.x,Pos2.y,Pos2.z };//構造体初期化子リスト
+		return DrawLine3D(p1, p2, Color);
+	}
+	//カメラの位置と姿勢の設定//DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
+	int SetCameraPositionAndTargetAndUpVec(
+		const Vector3 & cameraPosition,//カメラの位置
+		const Vector3 & cameraTarget,//カメラの注視点
+		const Vector3 & cameraUp//カメラの上の向き
+	)
+	{
+		VECTOR position = { cameraPosition.x,cameraPosition.y,cameraPosition.z };
+		VECTOR target = { cameraTarget.x,cameraTarget.y,cameraTarget.z };
+		VECTOR up = { cameraUp.x,cameraUp.y,cameraUp.z };
+		return SetCameraPositionAndTargetAndUpVec(position, target, up);
+	}
+	//モデルの座標変換用行列をセットする
+	//DxLib=>intMV1SetMatrix(intMHandle,MATRIXMatrix);
+	int MV1SetMatrix(const int MHandle, const Matrix4 Matrix)
+	{
+		MATRIX matrix; std::memcpy(&matrix, &Matrix, sizeof MATRIX);	//メモリ間コピー
+		return MV1SetMatrix(MHandle, matrix);
+	}
 
+	void Draw(int x, int y, Quaternion q)
+	{
+		DrawFormatString(x, y, 0xffffff, "%f %f %f %f", q.v.x, q.v.y, q.v.z, q.w);
+	}
