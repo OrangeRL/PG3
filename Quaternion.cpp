@@ -2,39 +2,48 @@
 #include "cmath"
 #include "math.h"
 #define PI 3.141592
-Quaternion Multiply(const Quaternion& q1, const Quaternion& q2)
-{
-	Quaternion q = IdentityQuaternion();
-	q.w = (q1.w * q2.w) - q1.v.dot(q2.v);
-	q.v = q1.v.cross(q2.v) + (q1.v * q2.w) + (q2.v * q1.w);
-	return q;
-}
+#define EPSILON 0.000001
 
 Quaternion IdentityQuaternion()
 {
-	return { 0,0,0,0 };
+    Quaternion i(0, 0, 0, 0);
+    return i;
 }
 
-
-Quaternion Conjugate(const Quaternion& quaternion)
+Quaternion Multiply(const Quaternion& q1, const Quaternion& q2)
 {
-    return Quaternion(-quaternion.v.x, -quaternion.v.y, -quaternion.v.z, quaternion.w);
+    Quaternion q = IdentityQuaternion();
+
+    q.w = (q1.w * q2.w) - q1.v.dot(q2.v);
+    q.v = q1.v.cross(q2.v) + (q1.v * q2.w) + (q2.v * q1.w);
+
+    return q;
 }
 
-float Norm(const Quaternion& quaternion)
+Quaternion Conjugate(const Quaternion& q)
 {
-    return sqrt(pow(quaternion.v.x, 2.0f) + pow(quaternion.v.y, 2.0f) + pow(quaternion.v.z, 2.0f) + pow(quaternion.w, 2.0f));
+    return Quaternion(-q.v.x, -q.v.y, -q.v.z, q.w);
 }
 
-Quaternion Normalize(const Quaternion& quaternion)
+float Norm(const Quaternion& q)
 {
-    return Quaternion(quaternion.v.x / Norm(quaternion), quaternion.v.y / Norm(quaternion), quaternion.v.z / Norm(quaternion), quaternion.w / Norm(quaternion));
+    return sqrt(pow(q.v.x, 2.0f) + pow(q.v.y, 2.0f) + pow(q.v.z, 2.0f) + pow(q.w, 2.0f));
 }
 
-Quaternion Inverse(const Quaternion& quaternion)
+Quaternion Normalize(const Quaternion& q)
 {
-    float n = pow(Norm(quaternion), 2.0f);
-    return Quaternion(Conjugate(quaternion).v.x / n, Conjugate(quaternion).v.y / n, Conjugate(quaternion).v.z / n, Conjugate(quaternion).w / n);
+    return Quaternion(q.v.x / Norm(q), q.v.y / Norm(q), q.v.z / Norm(q), q.w / Norm(q));
+}
+
+Quaternion Inverse(const Quaternion& q)
+{
+    float n = pow(Norm(q), 2.0f);
+    return Quaternion(Conjugate(q).v.x / n, Conjugate(q).v.y / n, Conjugate(q).v.z / n, Conjugate(q).w / n);
+}
+
+float dot(const Quaternion& q0, const Quaternion& q1)
+{
+    return (q0.w * q1.w) + (q0.v.x * q1.v.x) + (q0.v.y * q1.v.y) + (q0.v.z * q1.v.z);
 }
 
 Quaternion MakeAxisAngle(const Vector3& vector, float angle)
@@ -50,21 +59,21 @@ Quaternion MakeAxisAngle(const Vector3& vector, float angle)
     return q;
 }
 
-Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion)
+Vector3 RotateVector(const Vector3& v, const Quaternion& q)
 {
-    Quaternion q1(vector.x, vector.y, vector.z, 0);
+    Quaternion q1(v.x, v.y, v.z, 0);
     Quaternion q2;
-    q2 = Multiply(Multiply(quaternion, q1), Inverse(quaternion));
+    q2 = Multiply(Multiply(q, q1), Inverse(q));
 
     return Vector3(q2.v.x, q2.v.y, q2.v.z);
 }
 
-Matrix4 MakeRotateMatrix(const Quaternion& quaternion)
+Matrix4 MakeRotateMatrix(const Quaternion& q)
 {
-    float x = quaternion.v.x;
-    float y = quaternion.v.y;
-    float z = quaternion.v.z;
-    float w = quaternion.w;
+    float x = q.v.x;
+    float y = q.v.y;
+    float z = q.v.z;
+    float w = q.w;
     Matrix4 m1
     {
         pow(w,2.0f) + pow(x,2.0f) - pow(y,2.0f) - pow(z,2.0f),  2 * (x * y + w * z),    2 * (x * z - w * y),    0,
@@ -81,22 +90,28 @@ Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
     Quaternion q3 = q1;
 
     //ì‡êœ
-    float dot = q2.v.dot(q3.v);
+    float d = dot(q2, q3);
 
-    if (dot < 0)
+    if (d < 0)
     {
         q2 = Conjugate(q2);   //Ç‡Ç§ï–ï˚ÇÃâÒì]ÇóòópÇ∑ÇÈ
-        dot = -dot;     //ì‡êœÇ‡îΩì]
+        d = -d;     //ì‡êœÇ‡îΩì]
+    }
+
+    //Ç»Ç∑äpÇ™0ÇÃèÍçá
+    if (d >= 1.0f - EPSILON)
+    {
+        return Quaternion((1.0f - t) * q2.v.x + t * q3.v.x, (1.0f - t) * q2.v.y + t * q3.v.y,
+            (1.0f - t) * q2.v.z + t * q3.v.z, (1.0f - t) * q2.w + t * q3.w);
     }
 
     //Ç»Ç∑äpÇãÅÇﬂÇÈ
-    float theta = std::acos(dot);
+    float theta = std::acos(d);
 
     //thetaÇ∆sinÇégÇ¡Çƒï‚äÆåWêîscale0,scale1ÇãÅÇﬂÇÈ
     float scale0 = (sin((1 - t) * theta) / sin(theta));
     float scale1 = (sin(t * theta) / sin(theta));
 
-    /*return scale0 * q2 + scale1 * q3*/
     return Quaternion(q2.v.x * scale0 + q3.v.x * scale1, q2.v.y * scale0 + q3.v.y * scale1,
         q2.v.z * scale0 + q3.v.z * scale1, q2.w * scale0 + q3.w * scale1);
 }
