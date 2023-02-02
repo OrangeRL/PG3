@@ -37,14 +37,9 @@ Quaternion mul2 = Multiply(q2, q1);
 //norm 
 float norm = Norm(q1);
 
-Quaternion rotation0 = MakeAxisAngle({ 0.71f, 0.71f, 0.0f }, 0.3f);
-Quaternion rotation1 = MakeAxisAngle({ 0.71f, 0.0f, 0.71f }, 3.141592f);
-
-Quaternion interpolate0 = Slerp(rotation0, rotation1, 0.0f);
-Quaternion interpolate1 = Slerp(rotation0, rotation1, 0.3f);
-Quaternion interpolate2 = Slerp(rotation0, rotation1, 0.5f);
-Quaternion interpolate3 = Slerp(rotation0, rotation1, 0.7f);
-Quaternion interpolate4 = Slerp(rotation0, rotation1, 1.0f);
+Vector3 direction1 = { 1.0f,0.0f,1.0f };
+Vector3 direction2 = { 1.0f,1.0f,0.0f };
+Quaternion dirToDir = DirectionToDirection(direction1, direction2);
 
 //ƒJƒƒ‰‚ÌˆÊ’u‚ÆŽp¨‚ÌÝ’è
 //DxLib=>intSetCameraPositionAndTargetAndUpVec(VECTORPosition,VECTORTarget,VECTORUp);
@@ -179,17 +174,7 @@ void DrawAxis3D(const float length)
 void DrawKeyOperation()
 {
 	const unsigned white = GetColor(255, 255, 255);
-	Draw(0, 0, interpolate0);
-	Draw(0, 30, interpolate1);
-	Draw(0, 60, interpolate2);
-	Draw(0, 90, interpolate3);
-	Draw(0, 120, interpolate4);
-
-	DrawFormatString(350, 0, white, "interpolate0:Slerp(q0,q1,0.0f)");
-	DrawFormatString(350, 30, white, "interpolate1:Slerp(q0,q1,0.3f)");
-	DrawFormatString(350, 60, white, "interpolate2:Slerp(q0,q1,0.5f)");
-	DrawFormatString(350, 90, white, "interpolate3:Slerp(q0,q1,0.7f)");
-	DrawFormatString(350, 120, white, "interpolate4:Slerp(q0,q1,1.0f)");
+	Draw(0, 0, dirToDir);
 
 }
 	//ˆÈ~ADxLib‚ÌŠeŠÖ”‚ÅVector3Œ^Matrix4Œ^‚ð—˜—p‚Å‚«‚é‚æ‚¤‚É‚·‚éŠÖ”ŒQ//‹…‚Ì•`‰æ//DxLib=>intDrawSphere3D(VECTORCenterPos,floatr,intDivNum,unsignedintDifColor,unsignedintSpcColor,intFillFlag);

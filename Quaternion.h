@@ -43,3 +43,5 @@ Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 Matrix4 MakeRotateMatrix(const Quaternion& quaternion);
 //‹…–ÊüŒ`•âŠÔ
 Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
+//u‚©‚çv‚Ö‚Ì‰ñ“]‚ğ¶¬
+Quaternion DirectionToDirection(const Vector3& u, const Vector3& v);
